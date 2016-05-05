@@ -106,7 +106,7 @@ void readFile(TRAY **head){
 	int size = 0, i, j, k, noOfTrays = 0;
 	TRAY *ptr, *temp;
 	FILE *fp;
-	fp = fopen("input.txt", "r");
+	fp = fopen("trays.in", "r");
 	
 	// if input.txt does not exist
 	if(fp == NULL) return;
@@ -276,6 +276,7 @@ void linearSearch(char * word1, WORD **answer){
 		while(!feof(read)){
 
 			fscanf(read, "%s\n", word2);
+			//printf("%s\n", word2);
 			removeBN(word2);
 			len2 = strlen(word2);
 
@@ -287,22 +288,23 @@ void linearSearch(char * word1, WORD **answer){
 					createWord(&temp, word1, len1);
 					temp->valid = 1;				
 					totalValidWords++;
+					
+					if( (*answer) == NULL ) *answer = temp;
+					else{
+						ptr = (*answer);
+						while( ptr->next != NULL ){
+							printf("nooooooo\n");
+							ptr = ptr->next;
+						}
+						ptr->next = temp;
+					}
 					break;
 				}
 			}				
 		}
 	}
 		
-	fclose(read);
-
-	if( (*answer) == NULL ) *answer = temp;
-	else{
-		ptr = (*answer);
-		while( ptr->next != NULL ){
-			ptr = ptr->next;
-		}
-		ptr->next = temp;
-	}
+	fclose(read);	
 
 }
 
@@ -321,7 +323,7 @@ void generateWords(TRAY * head, int min_word_size){
 	WORD *answer, *traverse;
 		
 	ptr = head;
-		
+	
 		printf("Tray size: %d\n", ptr->size);		
 		start = 0;
 		move = 1;
@@ -329,9 +331,11 @@ void generateWords(TRAY * head, int min_word_size){
 		
 		for(i = 0; i < head->size*head->size+2; i++){
 			for(j = 0; j < head->size*head->size+2; j++){
-				option[i][j] = '-';
+				option[i][j] = '-';			
 			}
 		}
+	
+		printf("something\n");
 	
 		for(i = 0; i < ptr->size; i++){
 			for(j = 0; j < ptr->size; j++){
@@ -339,6 +343,7 @@ void generateWords(TRAY * head, int min_word_size){
 				nopts[1]++;				
 			}			
 		}
+		printf("something\n");
 	
 		while(nopts[start] > 0){
 			if(nopts[move] > 0){
@@ -346,11 +351,15 @@ void generateWords(TRAY * head, int min_word_size){
 				move++;
 				nopts[move] = 0;
 
-					word1 = (char *)malloc(sizeof(char)*move-1);
+					word1 = (char *)malloc(sizeof(char)*move);
 				
 					for(i = 1; i < move; i++){
 						word1[i-1] = option[i][nopts[i]];
+						//printf("%c", word1[i-1]);
 					}
+					word1[move-1] = '\0';
+					printf("%s\n", word1);
+					
 					linearSearch(word1, &answer);
 					free(word1);
 		
@@ -380,6 +389,7 @@ void generateWords(TRAY * head, int min_word_size){
 	
 		}
 
+
 	// write result to file	
 	write = fopen("output.txt", "w");
 	fprintf(write, "%d\n", totalValidWords);
@@ -392,4 +402,5 @@ void generateWords(TRAY * head, int min_word_size){
 	}
 
 	fclose(write);
+	
 }
