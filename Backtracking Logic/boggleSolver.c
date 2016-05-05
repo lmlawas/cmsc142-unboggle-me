@@ -5,31 +5,25 @@
 #define MINIMUM_WORD 3
 
 int main(){
-	int size, i, j;
-	TRAY *head = NULL;
-	//size = readFile(&tray);
-	
-	head = (TRAY *)malloc(sizeof(TRAY));
-	head->size = 4;
-	head->values = (char **)malloc(sizeof(char *)*head->size);
-	for(i = 0; i < head->size; i++){
-		head->values[i] = (char *)malloc(sizeof(char)*head->size);
+	int i;
+	WORD * generatedWords = NULL;
+	TRAY * puzzles = NULL; 
+	TRAY * ptr;
+
+	readFile(&puzzles);
+
+	ptr = puzzles;
+
+	while(ptr != NULL){
+		printTray(ptr->values, ptr->size);
+		ptr = ptr->next;
 	}
-	
-	for(i = 0; i < head->size; i++){
-		for(j = 0; j < head->size; j++){
-			head->values[i][j] = (char)('A' + i * head->size + j);
-		}
-	}
-		
-	printTray(head->values, head->size);
-	//readDictionary();
 	   
-	generateWords(head, MINIMUM_WORD);
+	generateWords(puzzles, 3);
 	
-	for(i = 0; i < head->size; i++){
-		free(head->values[i]);
+	for(i = 0; i < puzzles->size; i++){
+		free(puzzles->values[i]);
 	}
-	free(head->values);
-	free(head);
+	free(puzzles->values);
+	free(puzzles);
 }
