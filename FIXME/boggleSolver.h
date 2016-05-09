@@ -250,7 +250,7 @@ void dummyData(WORD ** head){
 	// ptr = tmp;
 }
 
-void linearSearch(char * word1, WORD **answer){
+void linearSearch(char * word1){
 /*******************************************************************************
 	This function compares the generated word word1 from the tray 
 	against the	words in the dictionary.
@@ -258,7 +258,7 @@ void linearSearch(char * word1, WORD **answer){
 	WORD *temp, *ptr;
 	FILE *read, *write;
 	int len1, len2;	
-	char word2[100];
+	char word2[100];	
 		
 	removeBN(word1);
 	len1 = strlen(word1);
@@ -285,26 +285,19 @@ void linearSearch(char * word1, WORD **answer){
 
 				// if word1 and word2 are equal
 				if( strcmp(word1, word2) == 0){
-					createWord(&temp, word1, len1);
-					temp->valid = 1;				
+
 					totalValidWords++;
-					
-					if( (*answer) == NULL ) *answer = temp;
-					else{
-						ptr = (*answer);
-						while( ptr->next != NULL ){
-							printf("nooooooo\n");
-							ptr = ptr->next;
-						}
-						ptr->next = temp;
-					}
+					write = fopen("scratch.txt", "a");
+					fprintf(write, "%s\n", word1);
+					fclose(write);
+
 					break;
 				}
 			}				
 		}
 	}
-		
-	fclose(read);	
+
+	fclose(read);
 
 }
 
@@ -316,10 +309,10 @@ void generateWords(TRAY * head, int min_word_size){
 	int nopts[head->size*head->size+2];
 	char option[head->size*head->size+2][head->size*head->size+2];
 	int i, j, row, col, neighbor_count;
-	char candidate[8];
+	char candidate[8], word[100];
 	char * word1;
 	TRAY * ptr = NULL;
-	FILE *write;
+	FILE *read, *write;
 	WORD *answer, *traverse;
 		
 	ptr = head;
@@ -333,17 +326,14 @@ void generateWords(TRAY * head, int min_word_size){
 			for(j = 0; j < head->size*head->size+2; j++){
 				option[i][j] = '-';			
 			}
-		}
-	
-		printf("something\n");
+		}	
 	
 		for(i = 0; i < ptr->size; i++){
 			for(j = 0; j < ptr->size; j++){
 				option[1][i*ptr->size+j+1] = ptr->values[i][j];				
 				nopts[1]++;				
 			}			
-		}
-		printf("something\n");
+		}		
 	
 		while(nopts[start] > 0){
 			if(nopts[move] > 0){
@@ -354,14 +344,12 @@ void generateWords(TRAY * head, int min_word_size){
 					word1 = (char *)malloc(sizeof(char)*move);
 				
 					for(i = 1; i < move; i++){
-						word1[i-1] = option[i][nopts[i]];
-						//printf("%c", word1[i-1]);
+						word1[i-1] = option[i][nopts[i]];						
 					}
-					word1[move-1] = '\0';
-					printf("%s\n", word1);
+					word1[move-1] = '\0';					
 					
-					linearSearch(word1, &answer);
-					free(word1);
+					linearSearch(word1);
+					free(word1);					
 		
 					//get index of top of stack of previous level
 					getIndex(ptr, option[move-1][nopts[move-1]], &row, &col);
@@ -389,16 +377,14 @@ void generateWords(TRAY * head, int min_word_size){
 	
 		}
 
-
 	// write result to file	
 	write = fopen("output.txt", "w");
 	fprintf(write, "%d\n", totalValidWords);
 
-	traverse = answer;
-
-	while(traverse != NULL){
-		if(traverse->valid == 1) fprintf(write, "%s\n", traverse->str);
-		traverse = traverse->next;
+	read = fopen("scratch.txt", "r");
+	while(!feof(read)){
+		fscanf(read, "%s\n", word);
+		fprintf(write, "%s\n", word);
 	}
 
 	fclose(write);
