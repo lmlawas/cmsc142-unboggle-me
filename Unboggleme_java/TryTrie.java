@@ -1,12 +1,18 @@
 import java.util.*;
+import java.io.*;
 
 class TryTrie{
 
     public static void main(String args[]){
-        TrieNode root = new TrieNode();
+        Trie dictionary = new Trie();
+        readFile( dictionary );
+        boolean found = dictionary.searchWord( "ABALONS" );
+        if( found ) System.out.println("Found1!!");
+        found = dictionary.searchWord( "ABALONE" );
+        if( found ) System.out.println("Found2!!");
     }
 
-    public void readFile(TrieNode root){
+    public static void readFile(Trie root){
     /***************************************************************************
         This method reads dictionary.txt .
     ***************************************************************************/
@@ -20,9 +26,9 @@ class TryTrie{
             // while dictionary.txt has words
             while( (word = br.readLine()) != null ) {
 
-                if( word.length < 3 ) continue;
+                if( word.length() < 3 ) continue;
+                root.addWord(word);
 
-                /* insert logic here har har */
             }
 
             // stop reading

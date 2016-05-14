@@ -1,23 +1,17 @@
-class TrieNode{
+/*
+    reference: http://www.programcreek.com/2014/05/leetcode-implement-trie-prefix-tree-java/
+*/
+
+import java.util.*;
+
+class TrieNode {
     char letter;
     boolean valid;
-    TrieNode parent;
-    TrieNode sibling;
-    TrieNode first;
+    HashMap<Character, TrieNode> children = new HashMap<Character, TrieNode>();
 
-    public TrieNode(){
-        letter = '^';
-        valid = false;
-        parent = null;
-        sibling = null;
-        first = null;
-    }
+    public TrieNode() {}
 
-    public TrieNode(char c, TrieNode p, TrieNode s, TrieNode f){
-        letter = c;
-        valid = false;
-        parent = p;
-        sibling = s;
-        first = f;
+    public TrieNode(char letter){
+        this.letter = letter;
     }
 }
