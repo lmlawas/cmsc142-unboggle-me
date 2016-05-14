@@ -71,11 +71,11 @@ class TryTrie{
             FileReader fr = new FileReader("dictionary.txt");
             BufferedReader br = new BufferedReader(fr);
             String word = null;
-            int i = 0;
 
             // while dictionary.txt has words
             while( (word = br.readLine()) != null ) {
 
+                // only add words with length 3 or more
                 if( word.length() < 3 ) continue;
                 root.addWord(word);
 
