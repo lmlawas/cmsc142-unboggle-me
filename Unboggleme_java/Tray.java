@@ -1,5 +1,7 @@
 import java.util.*;
 
-class Tray extends LinkedList<char[][]>{
-    private int size;
+class Tray{
+    int size;
+    char[][] values;
+    LinkedList<String> words;
 }
