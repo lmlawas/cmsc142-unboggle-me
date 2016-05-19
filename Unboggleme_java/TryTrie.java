@@ -7,32 +7,44 @@ class TryTrie{
 		LinkedList<Tray> trays = new LinkedList<Tray>();
 		LinkedList<String> valid_words = new LinkedList<String>();
 		Trie dictionary = new Trie();
+		boolean success_reading = false;
 
-        readTrays( trays );
-        readDictionary( dictionary );
+		success_reading = readDictionary( dictionary );
+		if( success_reading ){
+			success_reading = readTrays( trays, dictionary );
+		}
+        
+        if( success_reading ){
+        	for( int i = 0; i < trays.size(); i++ ){
+	        	LinkedList<String> generated_words = trays.get(i).words;
 
-        for( int i = 0; i < trays.size(); i++ ){
-        	LinkedList<String> generated_words = trays.get(i).words;
+	        	for( int j = 0; j < generated_words.size(); j++ ){
+	        		boolean found = dictionary.searchWord( generated_words.get(j) );
+	        		if( found ) valid_words.add( generated_words.get(j) );
+	        	}
+	        }
 
-        	for( int j = 0; j < generated_words.size(); j++ ){
-        		boolean found = dictionary.searchWord( generated_words.get(j) );
-        		if( found ) valid_words.add( generated_words.get(j) );
-        	}
+	        for( int i = 0; i < valid_words.size(); i++ ){
+	        	System.out.println( valid_words.get(i) );
+	        }
+        }
+        else{
+        	System.out.println("Error reading necessary input files.");
         }
 
-        for( int i = 0; i < valid_words.size(); i++ ){
-        	System.out.println( valid_words.get(i) );
-        }
+        
 
     }
 
-    private static void readTrays(LinkedList<Tray> trays){
+    private static boolean readTrays(LinkedList<Tray> trays, Trie dictionary){
 	/***************************************************************************
-		This method reads input.txt to get the values of the trays.
+		This method reads input.txt to get the values of the trays,
+		as well as the list of valid words generated from the tray
+		by searching the dictionary.
 	***************************************************************************/
 		try{
 			FileReader fr = new FileReader("input.txt");
-			BufferedReader br = new BufferedReader(fr);
+			BufferedReader br = new BufferedReader( fr );
 
 			// get number of trays
 			int noOfTrays = Integer.parseInt( br.readLine() );
@@ -57,28 +69,35 @@ class TryTrie{
 
 				}
 
-				Tray tray = new Tray(values, size);
+				Tray tray = new Tray( values, size, dictionary );
 
 				// add the tray instance
-				trays.add(tray);
+				trays.add( tray );
 			}
 
 			// stop reading
 			fr.close();
 
-		}catch(IOException e){
+			// if reading dictionary is successful
+            return true;
+
+		}catch( IOException e ){
 			System.out.println("No input.txt file found.");
 		}
+
+		// if reading dictionary is not successful
+		return false;
+
 	}// end of readTrays()
 
-    public static void readDictionary(Trie root){
+    public static boolean readDictionary(Trie root){
     /***************************************************************************
         This method reads dictionary.txt and adds them to the Trie.
     ***************************************************************************/
 
         try{
             FileReader fr = new FileReader("dictionary.txt");
-            BufferedReader br = new BufferedReader(fr);
+            BufferedReader br = new BufferedReader( fr );
             String word = null;
 
             // while dictionary.txt has words
@@ -93,9 +112,15 @@ class TryTrie{
             // stop reading
             fr.close();
 
-        }catch(IOException e){
+            // if reading dictionary is successful
+            return true;
+
+        }catch( IOException e ){
 			System.out.println("No dictionary.txt file found.");
 		}
+
+		// if reading dictionary is not successful
+		return false;
 
     }// end of readDictionary()
 }
