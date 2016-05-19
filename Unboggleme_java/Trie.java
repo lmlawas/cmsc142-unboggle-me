@@ -5,9 +5,11 @@
 import java.util.*;
 
 public class Trie {
+
+    /* Trie attribute */
     private TrieNode root;
 
-    /* constructor */
+    /* Trie constructor */
     public Trie() {
         root = new TrieNode();
     }

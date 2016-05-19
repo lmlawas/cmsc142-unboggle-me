@@ -2,36 +2,48 @@ import java.util.*;
 
 class Tray{
 
+	/* Tray attributes */
 	Letter values[][];
 	int size;
-	LinkedList<String> words;
+	LinkedList<String> valid_words;
 	
-	public Tray(char values[][], int size){
+	/* Tray constructor */
+	public Tray(char values[][], int size, Trie dictionary){
+
 		this.values = new Letter[size][size];
 	
-		for(int i = 0; i < size; i++){
-			for(int j = 0; j < size; j++){
-				Letter l = new Letter(values[i][j], i, j);
+		for( int i = 0; i < size; i++ ){
+			for( int j = 0; j < size; j++ ){
+				Letter l = new Letter( values[i][j], i, j );
 				this.values[i][j] = l;
 			}
 		}
-		this.words = new LinkedList<String>();
+		this.valid_words = new LinkedList<String>();
 		this.size = size;
-		generateWords();
+		generateValidWords( dictionary );
 		printTray();
-		System.out.println(this.words);
+		System.out.println( this.valid_words );
 	}
 
 	void printTray(){
-		for(int i = 0; i < this.size; i++){
-			for(int j = 0; j < this.size; j++){
-				System.out.print(this.values[i][j].c);
+	/***************************************************************************
+        This method displays the contents of the tray of values.
+    ***************************************************************************/
+		for( int i = 0; i < this.size; i++ ){
+			for( int j = 0; j < this.size; j++ ){
+				System.out.print( this.values[i][j].c );
 			}
 			System.out.println();
 		}	
 	}
 
-	void generateWords(){
+	void generateValidWords(Trie dictionary){
+	/***************************************************************************
+        This method generates a list of valid words using
+        	(1) iterative backtracking to list all possible words; and
+        	(2) Trie data structure to counter check the possible word
+        	to the dictionary.
+    ***************************************************************************/
 		int start, move;
 		int length = this.size*this.size+2;
 		int nopts[] = new int[length];
@@ -41,30 +53,30 @@ class Tray{
 		
 		
 		//prep for stack printing
-		for(i = 0; i < length; i++){
-			for(j = 0; j < length; j++){
-				Letter l = new Letter('-', i, j);
+		for( i = 0; i < length; i++ ){
+			for( j = 0; j < length; j++ ){
+				Letter l = new Letter( '-', i, j );
 				option[i][j] = l;
 			}		
 		}
 		
 		//initialize nopts
-		Arrays.fill(nopts, 0);
+		Arrays.fill( nopts, 0 );
 		
 		start = 0;
 		move = 1;
 		nopts[start] = 1;
 		
 		//initialize roots
-		for(i = 0; i < this.size; i++){
-			for(j = 0; j < this.size; j++){
-				Letter l = new Letter(values[i][j].c, i, j);
+		for( i = 0; i < this.size; i++ ){
+			for( j = 0; j < this.size; j++ ){
+				Letter l = new Letter( values[i][j].c, i, j );
 				option[1][i*this.size+j+1] = l;
 				nopts[1]++;
 			}
 		}
 		
-		System.out.println(length);
+		System.out.println( length );
 		
 		while(nopts[start] > 0){
 			if(nopts[move] > 0){
@@ -83,28 +95,27 @@ class Tray{
 				
 				
 				//add each character to the string
-				for(i = 1; i < move; i++){
+				for( i = 1; i < move; i++ ){
 					String c = Character.toString(option[i][nopts[i]].c);
 					word += c;
 				}
 				
 				//generated word as string
-				//System.out.println(word);
-				
-				this.words.add(new String(word));
+				boolean found = dictionary.searchWord( new String(word) );
+	        	if( found ) this.valid_words.add( new String(word) );
 				
 				ArrayList<Letter> neighbors = new ArrayList<Letter>(8);
 				neighbors = this.getNeighbors(option[move-1][nopts[move-1]]);
 				
 				i = 0;
-				for(Letter l : neighbors){
-					for(j = move; j >= 1; j--){
-						if(l.row == option[j][nopts[j]].row && l.col == option[j][nopts[j]].col){
+				for( Letter l : neighbors ){
+					for( j = move; j >= 1; j-- ){
+						if( l.row == option[j][nopts[j]].row && l.col == option[j][nopts[j]].col){
 							break;
 						}
 					}
 					
-					if(j == 0){
+					if( j == 0 ){
 						nopts[move]++;
 						option[move][nopts[move]] = l;
 					}
@@ -118,23 +129,26 @@ class Tray{
 		}
 		
 
-	}//end of generateWords
+	}// end of generateValidWords()
 
 	ArrayList<Letter> getNeighbors(Letter l){
+	/***************************************************************************
+        This method gets the list of valid neighbors of Letter l.
+    ***************************************************************************/
 		
-		ArrayList<Letter> arr = new ArrayList<Letter>(8);
+		ArrayList<Letter> neighbors = new ArrayList<Letter>(8);
 		
-		for(int i = -1; i < 2; i++){
-			for(int j = -1; j < 2; j++){
-				if(l.row+i >= 0 && l.row+i < this.size && l.col+j >= 0 && l.col+j < this.size){
+		for( int i = -1; i < 2; i++ ){
+			for( int j = -1; j < 2; j++ ){
+				if( l.row+i >= 0 && l.row+i < this.size && l.col+j >= 0 && l.col+j < this.size ){
 					if( !(i==0 && j==0) ){					
-						arr.add(this.values[l.row+i][l.col+j]);
+						neighbors.add( this.values[l.row+i][l.col+j] );
 					}
 				}
 			}
 		}
-		
-		return arr;		
-	}
+
+		return neighbors;		
+	}// end of getNeighbors()
 	
 }
