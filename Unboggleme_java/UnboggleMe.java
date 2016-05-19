@@ -10,27 +10,61 @@ class UnboggleMe{
 
 		success_reading = readDictionary( dictionary );
 		if( success_reading ){
+			System.out.println("Reading dictionary.txt ...");
 			success_reading = readTrays( trays, dictionary );
 		}
         
         if( success_reading ){
-        	for( int i = 0; i < trays.size(); i++ ){
-	        	LinkedList<String> valid_words = trays.get(i).valid_words;
 
-	        	System.out.println( valid_words.size() );
-	        	for( int j = 0; j < valid_words.size(); j++ ){
-	        		System.out.println( valid_words.get(j) );
-	        	}
-	        	System.out.println();
-	        }
+        	System.out.println("Reading input.txt ...");
+
+        	boolean success_writing = saveResult( trays );
+
+        	if( success_writing ){
+        		System.out.println("Valid words successfully saved to output.txt !");
+        	}
+        	else{
+        		System.out.println("Error writing to output file.");
+        	}
         }
         else{
         	System.out.println("Error reading necessary input files.");
         }
 
-        
-
     }
+
+    private static boolean saveResult(LinkedList<Tray> trays){
+	/***************************************************************************
+		This method saves the valid words of each tray to output.txt
+	***************************************************************************/
+		try{
+			// open output.txt
+			FileWriter fw = new FileWriter("output.txt");
+			
+			for( int i = 0; i < trays.size(); i++ ){
+	        	LinkedList<String> valid_words = trays.get(i).valid_words;
+	        	fw.write( "TRAY " + (i+1) + "\n" );
+	        	fw.write( valid_words.size() + "\n" );
+	        	for( int j = 0; j < valid_words.size(); j++ ){
+	        		fw.write( valid_words.get(j) + "\n" );	        		
+	        	}
+	        	fw.write( "\n" );
+	        }
+
+	        // stop writing to output.txt
+			fw.close();
+
+			// success writing to file
+			return true;
+		}
+		catch( Exception e ){
+			System.out.println("Error: "+e);
+		}
+
+		// error writing to file
+		return false;
+
+	}// end of saveResult()
 
     private static boolean readTrays(LinkedList<Tray> trays, Trie dictionary){
 	/***************************************************************************
@@ -86,7 +120,7 @@ class UnboggleMe{
 
 	}// end of readTrays()
 
-    public static boolean readDictionary(Trie root){
+    private static boolean readDictionary(Trie root){
     /***************************************************************************
         This method reads dictionary.txt and adds them to the Trie.
     ***************************************************************************/
