@@ -5,16 +5,25 @@ class TryTrie{
 
     public static void main(String[] args){
 		LinkedList<Tray> trays = new LinkedList<Tray>();
+		LinkedList<String> valid_words = new LinkedList<String>();
 		Trie dictionary = new Trie();
 
         readTrays( trays );
         readDictionary( dictionary );
 
-        boolean found = dictionary.searchWord( "ABALONS" );
-        if( found ) System.out.println("Found1!!");
+        for( int i = 0; i < trays.size(); i++ ){
+        	LinkedList<String> generated_words = trays.get(i).words;
 
-        found = dictionary.searchWord( "ABALONE" );
-        if( found ) System.out.println("Found2!!");
+        	for( int j = 0; j < generated_words.size(); j++ ){
+        		boolean found = dictionary.searchWord( generated_words.get(j) );
+        		if( found ) valid_words.add( generated_words.get(j) );
+        	}
+        }
+
+        for( int i = 0; i < valid_words.size(); i++ ){
+        	System.out.println( valid_words.get(i) );
+        }
+
     }
 
     private static void readTrays(LinkedList<Tray> trays){
@@ -29,11 +38,11 @@ class TryTrie{
 			int noOfTrays = Integer.parseInt( br.readLine() );
 
 			for( int i = 0; i < noOfTrays; i++ ){
-				Tray tray = new Tray();
-				tray.size = Integer.parseInt( br.readLine() );
-				char[][] values = new char[tray.size][tray.size];
+				
+				int size = Integer.parseInt( br.readLine() );
+				char[][] values = new char[size][size];
 
-				for( int j = 0; j < tray.size; j++ ){
+				for( int j = 0; j < size; j++ ){
 					String row = br.readLine();
 					char[] arr = row.toCharArray();
 					int n = 0;
@@ -48,7 +57,7 @@ class TryTrie{
 
 				}
 
-				tray.values = values;
+				Tray tray = new Tray(values, size);
 
 				// add the tray instance
 				trays.add(tray);
